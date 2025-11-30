@@ -1,4 +1,4 @@
-DEFAULT_WORDLIST="./common.txt"     # From: SecLists-master/Discovery/Web-Content/common.txt"
+DEFAULT_WORDLIST="./wordlists/common.txt"     # From: SecLists-master/Discovery/Web-Content/common.txt"
 
 read -p "URL: " url
 read -p "Wordlist: <default=common.txt> " wordlist
