@@ -1,0 +1,15 @@
+WORDLIST: SecLists-master/Discovery/Web-Content/common.txt
+
+Simple:
+feroxbuster -u <URL> -w <wordlist>
+
+Low Impact:
+feroxbuster -u <URL> -w <wordlist> -t <threads default=50> --rate-limit <requests_per_second> -n <--no-recursion>
+Example: feroxbuster -u <URL> -w <wordlist> -t 5 --rate-limit 20 -n
+
+
+
+Pipe urls with code 200 to a file:
+| tee >(grep "http" | awk '{print $NF}' > urls.txt)
+
+
