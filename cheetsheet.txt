@@ -1,4 +1,4 @@
-WORDLIST: SecLists-master/Discovery/Web-Content/common.txt
+DEFAULT WORDLIST: SecLists-master/Discovery/Web-Content/common.txt
 
 Simple:
 feroxbuster -u <URL> -w <wordlist>
