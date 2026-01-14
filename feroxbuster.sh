@@ -1,22 +1,40 @@
-DEFAULT_WORDLIST="./wordlists/common.txt"     # From: SecLists-master/Discovery/Web-Content/common.txt"
+DIR="./wordlists"
 
-read -p "URL: " url
-read -p "Wordlist: <default=common.txt> " wordlist
-read -p "Flag format: " flagformat
+# Check if the directory exists
+if [ ! -d "$DIR" ]; then
+    echo "Directory $DIR does not exist"
+    exit 1
+fi
 
-if [[ -z "$flagformat" ]]; then
+# Check if the directory is empty
+if [ -z "$(ls -A "$DIR")" ]; then
+    echo "No wordlists in directory $DIR"
+    exit 1
+fi
+
+read -p "URL: " URL
+read -p "Flag format: " FLAGFORMAT
+
+# Verify input for $URL
+if [[ -z "$URL" ]]; then
+    echo "URL is required."
+    exit 1
+fi
+
+# Verify input for $FLAGFORMAT
+if [[ -z "$FLAGFORMAT" ]]; then
     echo "Flag format is required."
     exit 1
 fi
 
-wordlist="${wordlist:-$DEFAULT_WORDLIST}"
+# Enable safe globbing
+shopt -s nullglob
 
-if [[ ! -f "$wordlist" ]]; then
-    echo "Wordlist not found: $wordlist"
-    exit 1
-fi
+WORDLISTS=("$DIR"/*)
 
-feroxbuster -u "$url" -w "$wordlist" | tee >(grep "http" | awk '{print $NF}' > urls.txt)
+set -o pipefail
+
+feroxbuster -u "$URL" -w <(sort -u "${WORDLISTS[@]}") | tee >(grep "http" | awk '{print $NF}' > urls.txt) || exit 1
 
 echo "======================="
 echo "Subdirectories located"
@@ -25,5 +43,5 @@ echo "Searching for FLAG"
 echo "======================="
 
 while read -r url; do
-    curl -i -s -f --max-time 10 "$url" 2>/dev/null | grep -i "$flagformat"
+    curl -i -s -f --max-time 10 "$url" 2>/dev/null | grep -i "$FLAGFORMAT"
 done < urls.txt
